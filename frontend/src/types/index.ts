@@ -1,0 +1,53 @@
+// Re-export shared types
+export * from '../../../shared/types';
+
+// Frontend-specific interfaces
+
+export interface RoomManagementProps {
+  onRoomCreated?: (room: Room) => void;
+  onRoomJoined?: (room: Room) => void;
+  onJoinRoom?: (roomId: string, playerName: string) => void;
+}
+
+export interface PlanningPokerGameProps {
+  room: Room;
+  roundState?: string;
+}
+
+export interface CardSelectionProps {
+  availableCards?: CardValue[];
+  selectedCard?: CardValue;
+  onCardSelect: (cardValue: CardValue) => void;
+  disabled?: boolean;
+}
+
+export interface PlayerStatusProps {
+  players: Player[];
+  cardSelections?: Record<string, boolean>; // playerId -> hasSelected
+}
+
+export interface ResultsDisplayProps {
+  result: EstimationResult;
+}
+
+// WebSocket hook return type
+export interface UseWebSocketReturn {
+  socket: Socket | null;
+  isConnected: boolean;
+  joinRoom: (roomId: string, playerName: string) => void;
+  startRound: () => void;
+  selectCard: (cardValue: CardValue) => void;
+  revealCards: () => void;
+  leaveRoom: () => void;
+  disconnect: () => void;
+}
+
+// Import shared types for re-export
+import type { 
+  Room, 
+  Player, 
+  EstimationResult,
+  CardValue
+} from '../../../shared/types';
+
+import type { Socket } from 'socket.io-client';
