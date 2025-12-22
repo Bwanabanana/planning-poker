@@ -28,6 +28,8 @@ export interface PlayerStatusProps {
 
 export interface ResultsDisplayProps {
   result: EstimationResult;
+  currentPlayerId?: string;
+  onCardSelect?: (cardValue: CardValue) => void;
 }
 
 // WebSocket hook return type

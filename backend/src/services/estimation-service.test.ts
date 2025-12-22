@@ -142,14 +142,23 @@ describe('EstimationService', () => {
       }).toThrow('No active estimation round');
     });
 
-    it('should throw error if cards already revealed', () => {
+    it('should allow card changes after cards are revealed for real-time collaboration', () => {
       estimationService.submitCard(testRoom.id, testPlayer1.id, '5');
       estimationService.submitCard(testRoom.id, testPlayer2.id, '8');
       estimationService.revealCards(testRoom.id);
       
+      // Should allow card changes after reveal
       expect(() => {
         estimationService.submitCard(testRoom.id, testPlayer1.id, '3');
-      }).toThrow('Cannot submit card after cards have been revealed');
+      }).not.toThrow();
+      
+      // Verify the card was actually updated
+      const result = estimationService.revealCards(testRoom.id);
+      expect(result).toBeTruthy();
+      if (result) {
+        const player1Card = result.cards.find(c => c.playerId === testPlayer1.id);
+        expect(player1Card?.cardValue).toBe('3');
+      }
     });
   });
 
@@ -192,12 +201,18 @@ describe('EstimationService', () => {
       expect(result!.statistics.hasVariance).toBe(false);
     });
 
-    it('should throw error if cards already revealed', () => {
-      estimationService.revealCards(testRoom.id);
+    it('should allow re-revealing cards for real-time collaboration', () => {
+      const firstResult = estimationService.revealCards(testRoom.id);
       
+      // Should allow revealing again (for recalculating results after card changes)
       expect(() => {
         estimationService.revealCards(testRoom.id);
-      }).toThrow('Cards have already been revealed');
+      }).not.toThrow();
+      
+      // Results should still be valid
+      const secondResult = estimationService.revealCards(testRoom.id);
+      expect(secondResult).toBeTruthy();
+      expect(secondResult?.cards.length).toBe(firstResult?.cards.length);
     });
   });
 

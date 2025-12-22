@@ -54,6 +54,7 @@ export interface ClientEvents {
 export interface ServerEvents {
   'room-joined': {
     room: Room;
+    currentPlayer: Player;
   };
   'player-joined': {
     player: Player;

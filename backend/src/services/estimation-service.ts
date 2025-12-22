@@ -72,9 +72,10 @@ export class EstimationServiceImpl implements EstimationService {
       throw new Error('No active estimation round');
     }
 
-    if (currentRound.isRevealed) {
-      throw new Error('Cannot submit card after cards have been revealed');
-    }
+    // Allow card changes even after reveal for real-time collaboration
+    // if (currentRound.isRevealed) {
+    //   throw new Error('Cannot submit card after cards have been revealed');
+    // }
 
     // Record the card selection
     const success = db.addCardToCurrentRound(roomId, playerId, cardValue);
@@ -102,11 +103,12 @@ export class EstimationServiceImpl implements EstimationService {
       throw new Error('No active estimation round');
     }
 
-    if (currentRound.isRevealed) {
-      throw new Error('Cards have already been revealed');
-    }
+    // Allow re-revealing cards for real-time collaboration
+    // if (currentRound.isRevealed) {
+    //   throw new Error('Cards have already been revealed');
+    // }
 
-    // Mark round as revealed
+    // Mark round as revealed (or keep it revealed if already revealed)
     const success = db.revealCardsInCurrentRound(roomId);
     if (!success) {
       throw new Error('Failed to reveal cards');

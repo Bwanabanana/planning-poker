@@ -1,9 +1,37 @@
-import React from 'react';
-import { ResultsDisplayProps } from '../types';
+import React, { useState } from 'react';
+import { ResultsDisplayProps, CardValue } from '../types';
+import CardSelection from './CardSelection';
 
 const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
-  result
+  result,
+  currentPlayerId,
+  onCardSelect
 }) => {
+  const [showCardSelection, setShowCardSelection] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<CardValue | undefined>(undefined);
+
+  // Handle clicking on a player's card (only allow current player to adjust their own card)
+  const handleCardClick = (playerId: string, currentCardValue: string) => {
+    if (playerId === currentPlayerId && onCardSelect) {
+      setSelectedCard(currentCardValue as CardValue);
+      setShowCardSelection(true);
+    }
+  };
+
+  // Handle selecting a new card value
+  const handleCardSelect = (cardValue: CardValue) => {
+    if (onCardSelect) {
+      onCardSelect(cardValue);
+    }
+    setShowCardSelection(false);
+    setSelectedCard(undefined);
+  };
+
+  // Handle closing the card selection modal
+  const handleCloseModal = () => {
+    setShowCardSelection(false);
+    setSelectedCard(undefined);
+  };
   // Group cards by value for pie chart data
   const getCardDistribution = () => {
     const distribution: Record<string, number> = {};
@@ -149,21 +177,57 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         <div className="player-cards-section">
           <h4>Player Cards</h4>
           <div className="revealed-cards-grid">
-            {result.cards.map((card) => (
-              <div key={card.playerId} className="player-card-result">
-                <div className="player-name">{card.playerName}</div>
-                <div className={getCardValueClassName(card.cardValue)}>
-                  <div className="card-face">
-                    <div className="card-value-display">
-                      {card.cardValue}
+            {result.cards.map((card) => {
+              const isCurrentPlayer = card.playerId === currentPlayerId;
+              const canAdjust = isCurrentPlayer && onCardSelect;
+              
+              return (
+                <div key={card.playerId} className="player-card-result">
+                  <div className="player-name">{card.playerName}</div>
+                  <div 
+                    className={`${getCardValueClassName(card.cardValue)} ${canAdjust ? 'adjustable' : ''}`}
+                    onClick={() => handleCardClick(card.playerId, card.cardValue)}
+                    style={{ cursor: canAdjust ? 'pointer' : 'default' }}
+                    title={canAdjust ? 'Click to adjust your estimate' : ''}
+                  >
+                    <div className="card-face">
+                      <div className="card-value-display">
+                        {card.cardValue}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
+
+      {/* Card Selection Modal */}
+      {showCardSelection && (
+        <div className="card-selection-modal">
+          <div className="modal-backdrop" onClick={handleCloseModal} />
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>Adjust Your Estimate</h3>
+              <button 
+                className="close-button" 
+                onClick={handleCloseModal}
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <CardSelection
+                selectedCard={selectedCard}
+                onCardSelect={handleCardSelect}
+                disabled={false}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

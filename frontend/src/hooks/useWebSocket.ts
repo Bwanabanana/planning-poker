@@ -21,7 +21,7 @@ export interface UseWebSocketReturn {
 }
 
 export interface UseWebSocketOptions {
-  onRoomJoined?: (room: Room) => void;
+  onRoomJoined?: (data: { room: Room; currentPlayer: Player }) => void;
   onPlayerJoined?: (player: Player) => void;
   onPlayerLeft?: (playerId: string) => void;
   onPlayerRemoved?: (playerId: string, playerName: string) => void;
@@ -125,12 +125,12 @@ export const useWebSocket = (options: UseWebSocketOptions = {}): UseWebSocketRet
 
     // Game events
     socket.on('room-joined', (data) => {
-      console.log('Room joined:', data.room);
+      console.log('Room joined:', data.room, 'Current player:', data.currentPlayer);
       // Mark that we've successfully joined
       if (roomStateRef.current) {
         roomStateRef.current.hasJoined = true;
       }
-      callbacksRef.current.onRoomJoined?.(data.room);
+      callbacksRef.current.onRoomJoined?.(data);
     });
 
     socket.on('player-joined', (data) => {

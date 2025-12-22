@@ -51,9 +51,10 @@ function App() {
   const [retryCount, setRetryCount] = useState(0);
 
   // WebSocket event handlers
-  const handleRoomJoined = useCallback((room: Room) => {
-    console.log('Room joined:', room);
-    setCurrentRoom(room);
+  const handleRoomJoined = useCallback((data: { room: Room; currentPlayer: Player }) => {
+    console.log('Room joined:', data.room, 'Current player:', data.currentPlayer);
+    setCurrentRoom(data.room);
+    setCurrentPlayer({ id: data.currentPlayer.id, name: data.currentPlayer.name });
     setAppState(AppState.IN_ROOM);
     setError('');
     setConnectionError('');
@@ -61,8 +62,8 @@ function App() {
     setIsLoading(false);
     
     // Set round state based on current room state
-    if (room.currentRound) {
-      if (room.currentRound.isRevealed) {
+    if (data.room.currentRound) {
+      if (data.room.currentRound.isRevealed) {
         setRoundState(RoundState.REVEALED);
       } else {
         setRoundState(RoundState.ACTIVE);
@@ -550,6 +551,8 @@ function App() {
                 {roundState === RoundState.REVEALED && estimationResult ? (
                   <ResultsDisplay
                     result={estimationResult}
+                    currentPlayerId={currentPlayer?.id}
+                    onCardSelect={handleCardSelect}
                   />
                 ) : (
                   <PlanningPokerGame

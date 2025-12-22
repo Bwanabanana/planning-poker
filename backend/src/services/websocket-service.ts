@@ -128,8 +128,11 @@ export class WebSocketService {
       // Join the socket to the room
       await socket.join(sanitizedRoomId);
 
-      // Send room state to the joining player
-      socket.emit('room-joined', { room: result.room });
+      // Send room state to the joining player with their player info
+      socket.emit('room-joined', { 
+        room: result.room,
+        currentPlayer: result.player 
+      });
 
       // If the current round is revealed, also send the estimation results
       if (result.room.currentRound && result.room.currentRound.isRevealed) {
@@ -289,6 +292,20 @@ export class WebSocketService {
           // Notify all players that estimation is complete
           this.broadcastToRoom(roomId, 'all-cards-submitted', {});
           console.log(`All players have selected cards in room ${roomId}`);
+        }
+
+        // If cards are already revealed, recalculate and broadcast updated results
+        const room = roomService.getRoomState(roomId);
+        if (room && room.currentRound && room.currentRound.isRevealed) {
+          try {
+            const result = estimationService.revealCards(roomId);
+            if (result) {
+              this.broadcastToRoom(roomId, 'cards-revealed', { result });
+              console.log(`Results updated in room ${roomId} after card adjustment`);
+            }
+          } catch (error) {
+            console.error(`Error recalculating results after card adjustment in room ${roomId}:`, error);
+          }
         }
 
         console.log(`Player ${playerId} selected card "${cardValue}" in room ${roomId}`);

@@ -1157,3 +1157,130 @@
 .remove-player-btn:active {
   transform: scale(0.95);
 }
+
+/* Card Adjustment Styles */
+.player-card-result .card-value.adjustable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.player-card-result .card-value.adjustable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  border-color: #0056b3;
+}
+
+.player-card-result .card-value.adjustable::after {
+  content: '✏️';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #007bff;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.player-card-result .card-value.adjustable:hover::after {
+  opacity: 1;
+}
+
+/* Card Selection Modal Styles */
+.card-selection-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  z-index: 1001;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.25rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  color: #666;
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button:hover {
+  background: #f8f9fa;
+  color: #333;
+}
+
+.modal-body {
+  padding: 1rem 2rem 2rem;
+}
+
+/* Adjust card selection styles within modal */
+.modal-body .card-selection {
+  padding: 0;
+  margin: 0;
+}
+
+.modal-body .card-selection__header {
+  display: none; /* Hide duplicate header */
+}
+
+.modal-body .cards-deck {
+  justify-content: center;
+}
+
+.modal-body .planning-card {
+  margin: 0.25rem;
+}
