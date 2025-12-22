@@ -10,6 +10,36 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   const [showCardSelection, setShowCardSelection] = useState(false);
   const [selectedCard, setSelectedCard] = useState<CardValue | undefined>(undefined);
 
+  // Fun random phrases for when results are revealed
+  const getRandomRevealPhrase = () => {
+    const phrases = [
+      "The votes are in! 🗳️",
+      "Cards on the table! 🃏",
+      "The numbers have spoken! 📊",
+      "Estimation complete! ✨",
+      "The results are revealed! 🎭",
+      "Democracy in action! 🏛️",
+      "The cards don't lie! 🎯",
+      "Voting session closed! 📋",
+      "The jury has decided! ⚖️",
+      "Numbers are crunched! 🔢",
+      "The tally is final! 📈",
+      "Estimates are locked in! 🔒",
+      "The people have spoken! 📢",
+      "Survey says... 📺",
+      "My hovercraft is full of eels! 🚁",
+      "The dice have been cast! 🎲",
+      "Ballots counted! 🗃️",
+      "The verdict is in! 📜",
+      "Time to face the music! 🎵",
+      "The moment of truth! ⏰"
+    ];
+    return phrases[Math.floor(Math.random() * phrases.length)];
+  };
+
+  // Generate a random phrase once when component mounts
+  const [randomPhrase] = useState(() => getRandomRevealPhrase());
+
   // Handle clicking on a player's card (only allow current player to adjust their own card)
   const handleCardClick = (playerId: string, currentCardValue: string) => {
     if (playerId === currentPlayerId && onCardSelect) {
@@ -138,7 +168,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   return (
     <div className="results-display">
       <div className="results-header">
-        <h3>Estimation Results</h3>
+        <h3 className="results-title">{randomPhrase}</h3>
         {result.statistics.hasVariance && (
           <div className="variance-alert">
             <span className="alert-icon">⚠️</span>

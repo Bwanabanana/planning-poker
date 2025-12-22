@@ -108,7 +108,7 @@ const CardSelection: React.FC<CardSelectionProps> = ({
         )}
         {!disabled && selectedCard && (
           <p className="confirmation-message">
-            You can change your selection until cards are revealed
+            Selection made, you can change it at any point
           </p>
         )}
       </div>
