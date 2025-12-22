@@ -12,8 +12,11 @@ This guide explains how to run the Planning Poker application in a single Docker
 
 #### Option 1: Using Docker Compose (Recommended)
 ```bash
-# Build and start the application
+# First time setup - build and start the application
 docker-compose up -d
+
+# After code changes - rebuild and restart with latest updates
+docker-compose up -d --build
 
 # View logs
 docker-compose logs -f
@@ -22,10 +25,15 @@ docker-compose logs -f
 docker-compose down
 ```
 
+**Important**: Use the `--build` flag whenever you make changes to the source code to ensure the Docker image includes your latest updates.
+
 #### Option 2: Using Docker directly
 ```bash
 # Build the image
 docker build -t planning-poker .
+
+# After code changes - rebuild the image
+docker build -t planning-poker . --no-cache
 
 # Run the container
 docker run -d -p 80:80 --name planning-poker-app planning-poker
@@ -43,6 +51,48 @@ docker rm planning-poker-app
 Once running, open your browser and navigate to:
 - **Application**: http://localhost
 - **Health Check**: http://localhost/health
+
+## Rebuilding After Code Changes
+
+**Important**: Docker builds your application code into the image at build time. When you make changes to the source code, you must rebuild the Docker image to see those changes.
+
+### When to Rebuild
+- After modifying any source code (frontend or backend)
+- After updating dependencies (package.json changes)
+- After changing configuration files
+
+### How to Rebuild
+
+#### Using Docker Compose
+```bash
+# Stop current containers
+docker-compose down
+
+# Rebuild and start with latest code
+docker-compose up -d --build
+```
+
+#### Using Docker directly
+```bash
+# Stop and remove old container
+docker stop planning-poker-app
+docker rm planning-poker-app
+
+# Rebuild image with latest code
+docker build -t planning-poker . --no-cache
+
+# Start new container
+docker run -d -p 80:80 --name planning-poker-app planning-poker
+```
+
+### Quick Rebuild Commands
+```bash
+# One-liner for Docker Compose
+docker-compose down && docker-compose up -d --build
+
+# One-liner for Docker direct
+docker stop planning-poker-app && docker rm planning-poker-app && docker build -t planning-poker . && docker run -d -p 80:80 --name planning-poker-app planning-poker
+```
 
 ## Architecture
 
@@ -213,14 +263,18 @@ docker run -d -p 80:80 \
 
 ### Updating the Application
 
+When you have new code changes:
+
 ```bash
-# Pull latest code
+# Pull latest code from repository
 git pull
 
-# Rebuild and restart
+# Rebuild and restart (see "Rebuilding After Code Changes" section above)
 docker-compose down
 docker-compose up -d --build
 ```
+
+For detailed rebuild instructions, see the **"Rebuilding After Code Changes"** section above.
 
 ## Support
 
