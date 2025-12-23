@@ -54,14 +54,58 @@ const RoomManagement: React.FC<RoomManagementProps> = ({
     }
   };
 
-  // Check for room name in URL parameters
+  // Check for room name and username in URL parameters and auto-join if both present
   React.useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const roomNameFromUrl = urlParams.get('room');
+    const usernameFromUrl = urlParams.get('username');
+    
     if (roomNameFromUrl) {
       setRoomName(decodeURIComponent(roomNameFromUrl));
     }
-  }, []);
+    
+    if (usernameFromUrl) {
+      setPlayerName(decodeURIComponent(usernameFromUrl));
+    }
+    
+    // Auto-join if both parameters are present
+    if (roomNameFromUrl && usernameFromUrl && !isJoining) {
+      const roomName = decodeURIComponent(roomNameFromUrl).trim();
+      const playerName = decodeURIComponent(usernameFromUrl).trim();
+      
+      // Validate parameters before auto-joining
+      if (roomName.length > 0 && roomName.length <= 50 && 
+          playerName.length > 0 && playerName.length <= 30) {
+        // Small delay to ensure state is updated
+        setTimeout(() => {
+          handleAutoJoin(roomName, playerName);
+        }, 100);
+      } else {
+        setError('Invalid room name or username in URL parameters');
+      }
+    }
+  }, [isJoining]);
+
+  const handleAutoJoin = (roomName: string, playerName: string) => {
+    setIsJoining(true);
+    setError('');
+    
+    try {
+      if (onJoinRoom) {
+        onJoinRoom(roomName, playerName);
+        
+        // Clean up URL parameters after successful auto-join attempt
+        const url = new URL(window.location.href);
+        url.searchParams.delete('room');
+        url.searchParams.delete('username');
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch (err) {
+      console.error('Auto-join error:', err);
+      setError('Failed to auto-join room. Please try manually.');
+      setIsJoining(false);
+    }
+  };
 
   return (
     <div className="room-management">
@@ -71,6 +115,13 @@ const RoomManagement: React.FC<RoomManagementProps> = ({
         {error && (
           <div className="error-message" role="alert">
             {error}
+          </div>
+        )}
+
+        {isJoining && roomName && playerName && (
+          <div className="auto-join-indicator">
+            <div className="spinner"></div>
+            <p>Auto-joining room "{roomName}" as "{playerName}"...</p>
           </div>
         )}
 
