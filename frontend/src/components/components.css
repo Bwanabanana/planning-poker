@@ -1342,3 +1342,55 @@
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
+/* Special styling for consensus phrases */
+.results-title.consensus-phrase {
+  color: #28a745;
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border: 2px solid #28a745;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  animation: consensusCelebration 0.8s ease-out;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+}
+
+@keyframes consensusCelebration {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(10px) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Add a subtle glow effect for consensus */
+.results-title.consensus-phrase::before {
+  content: '🎉';
+  position: absolute;
+  left: -30px;
+  animation: bounce 2s infinite;
+}
+
+.results-title.consensus-phrase::after {
+  content: '🎉';
+  position: absolute;
+  right: -30px;
+  animation: bounce 2s infinite 0.5s;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}

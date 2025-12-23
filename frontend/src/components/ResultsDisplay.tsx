@@ -13,32 +13,69 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   // Fun random phrases for when results are revealed
   const getRandomRevealPhrase = () => {
     const phrases = [
-      "The votes are in! 🗳️",
-      "Cards on the table! 🃏",
-      "The numbers have spoken! 📊",
-      "Estimation complete! ✨",
-      "The results are revealed! 🎭",
-      "Democracy in action! 🏛️",
-      "The cards don't lie! 🎯",
-      "Voting session closed! 📋",
-      "The jury has decided! ⚖️",
-      "Numbers are crunched! 🔢",
-      "The tally is final! 📈",
-      "Estimates are locked in! 🔒",
-      "The people have spoken! 📢",
-      "Survey says... 📺",
-      "My hovercraft is full of eels! 🚁",
-      "The dice have been cast! 🎲",
-      "Ballots counted! 🗃️",
-      "The verdict is in! 📜",
-      "Time to face the music! 🎵",
-      "The moment of truth! ⏰"
+      "The votes are in, but the numbers are out! 🗳️",
+      "Cards on the table, but need a little work! 🃏",
+      "The players have spoken, but must speak again! 📊",
+      "Estimations are in, but need work! ✨",
+      "The results are revealed and need a -twerk- tweak! 🎭",
+      "Democracy, here we come! 🏛️",
+      "The hips don't lie and nor do the cards! 🎯",
+      "Voting session over but has only just begun! 📋",
+      "The jury needs to adjourn! ⚖️",
+      "Numbers are crunched and are a little too crunchy! 🔢",
+      "The tally is tallied wrong! 📈",
+      "Estimates are in... and out! 🔒",
+      "The people have spoken but in different languages! 📢",
+      "Survey says...nu-nurr 📺",
+      "My hovercraft is full of eels, the cards give me bad feels! 🚁",
+      "The dice have been cast, let's have a second roll! 🎲",
+      "Ballots counted, nearly there! 🗃️",
+      "The verdict is in, and it's a split jury! 📜",
+      "Time to face the music, who's going to sing for their vote? 🎵",
+      "The moment of truth still awaits consensus! ⏰",
+      "I've seen closer parking at a monster truck rally! 🎲"
     ];
     return phrases[Math.floor(Math.random() * phrases.length)];
   };
 
-  // Generate a random phrase once when component mounts
-  const [randomPhrase] = useState(() => getRandomRevealPhrase());
+  // Special phrases for when all results match (consensus)
+  const getRandomConsensusPhrase = () => {
+    const phrases = [
+      "Hole in one! ⛳",
+      "Immediate consensus! 🤝",
+      "Perfect alignment! ✨",
+      "Unanimous decision! 👏",
+      "Great minds think alike! 🧠",
+      "Team harmony achieved! 🎵",
+      "Bullseye! 🎯",
+      "Flawless agreement! 💎",
+      "Synchronized thinking! 🔄",
+      "Crystal clear consensus! 💎",
+      "No debate needed! ✅",
+      "Instant agreement! ⚡",
+      "Perfect match! 🎪",
+      "Team telepathy! 🔮",
+      "Effortless consensus! 🌟",
+      "Spot on alignment! 🎪",
+      "Unified vision! 👁️",
+      "Seamless agreement! 🤝",
+      "Picture perfect! 📸",
+      "Nailed it together! 🔨"
+    ];
+    return phrases[Math.floor(Math.random() * phrases.length)];
+  };
+
+  // Check if all cards have the same value (consensus)
+  const hasConsensus = () => {
+    if (result.cards.length === 0) return false;
+    const firstValue = result.cards[0].cardValue;
+    return result.cards.every(card => card.cardValue === firstValue);
+  };
+
+  // Generate appropriate phrase based on current consensus state (updates dynamically)
+  const getCurrentPhrase = () => {
+    return hasConsensus() ? getRandomConsensusPhrase() : getRandomRevealPhrase();
+  };
 
   // Handle clicking on a player's card (only allow current player to adjust their own card)
   const handleCardClick = (playerId: string, currentCardValue: string) => {
@@ -168,7 +205,9 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   return (
     <div className="results-display">
       <div className="results-header">
-        <h3 className="results-title">{randomPhrase}</h3>
+        <h3 className={`results-title ${hasConsensus() ? 'consensus-phrase' : ''}`}>
+          {getCurrentPhrase()}
+        </h3>
         {result.statistics.hasVariance && (
           <div className="variance-alert">
             <span className="alert-icon">⚠️</span>
