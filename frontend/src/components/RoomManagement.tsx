@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
 import { Room, RoomManagementProps } from '../types';
 import { buildApiUrl } from '../config';
+import { useAutoJoin } from '../hooks/useAutoJoin';
 
 const RoomManagement: React.FC<RoomManagementProps> = ({
   onRoomJoined,
   onJoinRoom
 }) => {
-  const [roomName, setRoomName] = useState('');
-  const [playerName, setPlayerName] = useState('');
   const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState('');
+
+  // Auto-join logic extracted to custom hook
+  const {
+    roomName,
+    playerName,
+    isAutoJoining,
+    autoJoinError,
+    setRoomName,
+    setPlayerName
+  } = useAutoJoin(onJoinRoom, isJoining);
 
   const handleJoinRoom = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,74 +63,26 @@ const RoomManagement: React.FC<RoomManagementProps> = ({
     }
   };
 
-  // Check for room name and username in URL parameters and auto-join if both present
-  React.useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const roomNameFromUrl = urlParams.get('room');
-    const usernameFromUrl = urlParams.get('username');
-    
-    if (roomNameFromUrl) {
-      setRoomName(decodeURIComponent(roomNameFromUrl));
-    }
-    
-    if (usernameFromUrl) {
-      setPlayerName(decodeURIComponent(usernameFromUrl));
-    }
-    
-    // Auto-join if both parameters are present
-    if (roomNameFromUrl && usernameFromUrl && !isJoining) {
-      const roomName = decodeURIComponent(roomNameFromUrl).trim();
-      const playerName = decodeURIComponent(usernameFromUrl).trim();
-      
-      // Validate parameters before auto-joining
-      if (roomName.length > 0 && roomName.length <= 50 && 
-          playerName.length > 0 && playerName.length <= 30) {
-        // Small delay to ensure state is updated
-        setTimeout(() => {
-          handleAutoJoin(roomName, playerName);
-        }, 100);
-      } else {
-        setError('Invalid room name or username in URL parameters');
-      }
-    }
-  }, [isJoining]);
-
-  const handleAutoJoin = (roomName: string, playerName: string) => {
-    setIsJoining(true);
-    setError('');
-    
-    try {
-      if (onJoinRoom) {
-        onJoinRoom(roomName, playerName);
-        
-        // Clean up URL parameters after successful auto-join attempt
-        const url = new URL(window.location.href);
-        url.searchParams.delete('room');
-        url.searchParams.delete('username');
-        window.history.replaceState({}, '', url.toString());
-      }
-    } catch (err) {
-      console.error('Auto-join error:', err);
-      setError('Failed to auto-join room. Please try manually.');
-      setIsJoining(false);
-    }
-  };
-
   return (
     <div className="room-management">
       <div className="room-management__container">
         <h2>Planning Poker</h2>
         
-        {error && (
+        {(error || autoJoinError) && (
           <div className="error-message" role="alert">
-            {error}
+            {error || autoJoinError}
           </div>
         )}
 
-        {isJoining && roomName && playerName && (
+        {(isAutoJoining || isJoining) && roomName && playerName && (
           <div className="auto-join-indicator">
             <div className="spinner"></div>
-            <p>Auto-joining room "{roomName}" as "{playerName}"...</p>
+            <p>
+              {isAutoJoining 
+                ? `Auto-joining room "${roomName}" as "${playerName}"...`
+                : 'Joining...'
+              }
+            </p>
           </div>
         )}
 
@@ -135,7 +96,7 @@ const RoomManagement: React.FC<RoomManagementProps> = ({
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
                 placeholder="Enter room name"
-                disabled={isJoining}
+                disabled={isJoining || isAutoJoining}
                 maxLength={50}
               />
             </div>
@@ -148,7 +109,7 @@ const RoomManagement: React.FC<RoomManagementProps> = ({
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
                 placeholder="Enter your name"
-                disabled={isJoining}
+                disabled={isJoining || isAutoJoining}
                 maxLength={30}
               />
             </div>
@@ -156,10 +117,10 @@ const RoomManagement: React.FC<RoomManagementProps> = ({
             <div className="button-group">
               <button 
                 type="submit" 
-                disabled={isJoining || !roomName.trim() || !playerName.trim()}
+                disabled={isJoining || isAutoJoining || !roomName.trim() || !playerName.trim()}
                 className="btn btn-primary btn-large"
               >
-                {isJoining ? 'Joining...' : 'Join Room'}
+                {(isJoining || isAutoJoining) ? 'Joining...' : 'Join Room'}
               </button>
             </div>
           </form>
