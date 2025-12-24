@@ -1,0 +1,34 @@
+import React from 'react';
+import RoomManagement from './RoomManagement';
+import LoadingOverlay from './LoadingOverlay';
+import type { Room } from '../types';
+
+interface RoomSelectionViewProps {
+  isJoining: boolean;
+  onRoomCreated: (room: Room) => Promise<void>;
+  onRoomJoined: (room: Room) => Promise<void>;
+  onJoinRoom: (roomId: string, playerName: string) => void;
+}
+
+const RoomSelectionView: React.FC<RoomSelectionViewProps> = ({
+  isJoining,
+  onRoomCreated,
+  onRoomJoined,
+  onJoinRoom
+}) => {
+  return (
+    <div className="room-selection-view">
+      <LoadingOverlay 
+        isVisible={isJoining}
+        message="Joining room..."
+      />
+      <RoomManagement
+        onRoomCreated={onRoomCreated}
+        onRoomJoined={onRoomJoined}
+        onJoinRoom={onJoinRoom}
+      />
+    </div>
+  );
+};
+
+export default RoomSelectionView;
