@@ -5,6 +5,7 @@ import type { Room } from '../types';
 
 interface RoomSelectionViewProps {
   isJoining: boolean;
+  isConnected: boolean;
   onRoomCreated: (room: Room) => Promise<void>;
   onRoomJoined: (room: Room) => Promise<void>;
   onJoinRoom: (roomId: string, playerName: string) => void;
@@ -12,6 +13,7 @@ interface RoomSelectionViewProps {
 
 const RoomSelectionView: React.FC<RoomSelectionViewProps> = ({
   isJoining,
+  isConnected,
   onRoomCreated,
   onRoomJoined,
   onJoinRoom
@@ -26,6 +28,7 @@ const RoomSelectionView: React.FC<RoomSelectionViewProps> = ({
         onRoomCreated={onRoomCreated}
         onRoomJoined={onRoomJoined}
         onJoinRoom={onJoinRoom}
+        isConnected={isConnected}
       />
     </div>
   );

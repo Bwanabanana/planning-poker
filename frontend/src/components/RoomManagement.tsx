@@ -5,7 +5,8 @@ import { useAutoJoin } from '../hooks/useAutoJoin';
 
 const RoomManagement: React.FC<RoomManagementProps> = ({
   onRoomJoined,
-  onJoinRoom
+  onJoinRoom,
+  isConnected = false
 }) => {
   const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState('');
@@ -18,7 +19,7 @@ const RoomManagement: React.FC<RoomManagementProps> = ({
     autoJoinError,
     setRoomName,
     setPlayerName
-  } = useAutoJoin(onJoinRoom, isJoining);
+  } = useAutoJoin(onJoinRoom, isJoining, isConnected);
 
   const handleJoinRoom = async (e: React.FormEvent) => {
     e.preventDefault();

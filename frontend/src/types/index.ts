@@ -7,6 +7,7 @@ export interface RoomManagementProps {
   onRoomCreated?: (room: Room) => void;
   onRoomJoined?: (room: Room) => void;
   onJoinRoom?: (roomId: string, playerName: string) => void;
+  isConnected?: boolean;
 }
 
 export interface PlanningPokerGameProps {

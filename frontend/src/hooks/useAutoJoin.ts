@@ -18,7 +18,8 @@ export interface AutoJoinHook {
 
 export function useAutoJoin(
   onJoinRoom?: (roomName: string, playerName: string) => void,
-  isJoining?: boolean
+  isJoining?: boolean,
+  isConnected?: boolean
 ): AutoJoinHook {
   const [roomName, setRoomName] = useState('');
   const [playerName, setPlayerName] = useState('');
@@ -54,7 +55,7 @@ export function useAutoJoin(
     }
     
     // Auto-join if both parameters are present and not already joining
-    if (params.roomName && params.username && !isJoining && !isAutoJoining) {
+    if (params.roomName && params.username && !isJoining && !isAutoJoining && isConnected) {
       const validation = validateRoomParams(params);
       
       if (validation.isValid) {
@@ -66,7 +67,7 @@ export function useAutoJoin(
         setAutoJoinError(validation.error || 'Invalid room name or username in URL parameters');
       }
     }
-  }, [isJoining, isAutoJoining, handleAutoJoin]);
+  }, [isJoining, isAutoJoining, isConnected, handleAutoJoin]);
   
   // Reset auto-joining state when external joining state changes
   useEffect(() => {

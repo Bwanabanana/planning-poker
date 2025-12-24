@@ -8,6 +8,7 @@ import type { Room, CardValue } from '../types';
 import { RoomStateHook } from './useRoomState';
 
 interface UIStateActions {
+  isJoining: boolean;
   setIsLoading: (loading: boolean) => void;
   setIsJoining: (joining: boolean) => void;
   setError: (error: string) => void;
@@ -69,7 +70,7 @@ export function useGameActions(
     
     // Set a timeout for join operation
     const joinTimeout = setTimeout(() => {
-      if (isJoining) {
+      if (uiState.isJoining) {
         uiState.setError('Room join timed out. Please check your connection and try again.');
         uiState.setIsJoining(false);
         uiState.setIsLoading(false);

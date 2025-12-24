@@ -54,7 +54,7 @@ function App() {
   // Game action handlers - extracted to custom hook
   const gameActions = useGameActions(
     roomState,
-    uiState,
+    { ...uiState, isJoining: uiState.isJoining },
     { joinRoom, startRound, selectCard, revealCards, leaveRoom, removePlayer },
     isConnected,
     uiState.isJoining,
@@ -97,6 +97,7 @@ function App() {
         {roomState.appState === AppState.ROOM_SELECTION && (
           <RoomSelectionView
             isJoining={uiState.isJoining}
+            isConnected={isConnected}
             onRoomCreated={gameActions.handleRoomCreated}
             onRoomJoined={gameActions.handleRoomJoinRequest}
             onJoinRoom={gameActions.handleJoinRoom}
