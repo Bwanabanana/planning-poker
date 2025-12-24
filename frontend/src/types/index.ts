@@ -32,18 +32,6 @@ export interface ResultsDisplayProps {
   onCardSelect?: (cardValue: CardValue) => void;
 }
 
-// WebSocket hook return type
-export interface UseWebSocketReturn {
-  socket: Socket | null;
-  isConnected: boolean;
-  joinRoom: (roomId: string, playerName: string) => void;
-  startRound: () => void;
-  selectCard: (cardValue: CardValue) => void;
-  revealCards: () => void;
-  leaveRoom: () => void;
-  disconnect: () => void;
-}
-
 // Import shared types for re-export
 import type { 
   Room, 
@@ -51,5 +39,3 @@ import type {
   EstimationResult,
   CardValue
 } from '../../../shared/types';
-
-import type { Socket } from 'socket.io-client';
